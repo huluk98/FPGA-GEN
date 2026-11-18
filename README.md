@@ -1,20 +1,20 @@
 # FPGA-GEN: Target-Aware RTL Generation via HLS
 
-This anonymous reviewer artifact contains the **workflow and runnable example for the DAC 2027 submission** “FPGA-GEN: Target-Aware RTL Generation via HLS.” It is a deliberately limited release: the documentation and host-tested example are available now, while the full implementation is planned for release after acceptance.
+This anonymous reviewer artifact contains the **workflow and runnable example for the DAC 2027 submission** “FPGA-GEN: Target-Aware RTL Generation via HLS.”
 
-The example pairs a small C reference with an HLS-C candidate produced by FPGA-GEN. It compiles both with a normal C++ compiler and checks them on deterministic directed and seeded-random inputs. It does not call a model or FPGA vendor tool, generate RTL, reproduce paper results, or claim hardware validation.
+The example pairs a small C reference with an HLS-C candidate produced by FPGA-GEN. It compiles both with a normal C++ compiler and checks them on deterministic directed and seeded-random inputs.
 
 ## Run the example
 
-Requirements: Python 3.9 or newer and a C++17 compiler available as `c++`, `g++`, or `clang++`.
+The example requires Python 3.9 or newer and a C++17 compiler available as `c++`, `g++`, or `clang++`.
 
-From the extracted `FPGA-GEN` directory:
+Run the following command from the directory that contains this `README.md` and `examples/`.
 
 ```sh
 python3 examples/vector_add/run.py
 ```
 
-Expected output:
+A successful run prints
 
 ```text
 PASS host_tests=70 seed=7
@@ -32,7 +32,7 @@ The generated `build/vector_add/report.json` records the status, seed, actual ho
 
 ## Illustrative ranking calculation
 
-This toy calculation illustrates the cost in [WORKFLOW.md](WORKFLOW.md). Its numbers are independent of the host example and paper measurements, and it is not an executable substitute for the private pipeline. Suppose `C0` takes 100 cycles at 10 ns and uses 100 LUTs. An alternative takes 80 cycles at the same clock and uses 110 LUTs. When LUT is the only known reference resource:
+This toy calculation illustrates the cost in [WORKFLOW.md](WORKFLOW.md). Its numbers are independent of the host example and paper measurements. Suppose `C0` takes 100 cycles at 10 ns and uses 100 LUTs. An alternative takes 80 cycles at the same clock and uses 110 LUTs. With LUT as the only known reference resource, the costs are
 
 ```text
 J(C0) = (100 * 10 / 1000) * (100 / 100) = 1.00
@@ -45,11 +45,10 @@ The lower cost ranks the alternative first among valid screened candidates. Rank
 
 | Included in this artifact | Planned after acceptance |
 | --- | --- |
-| Method description | Full orchestration implementation |
-| Standalone `vector_add` reference, generated HLS-C candidate, and host test | Model-candidate generation and target-aware ranking |
-| Deterministic host-only report with source hashes | Vendor-tool screening, bounded repair, and held-out admission |
-| Four-file example runnable with standard host tools | Evaluation harnesses and paper-result artifacts approved for release |
+| Method contract in [WORKFLOW.md](WORKFLOW.md) | Full orchestration implementation |
+| `vector_add` reference, generated candidate, host test, and deterministic report | Model generation, vendor-tool screening, live ranking, bounded repair, and held-out admission |
+| Explicit `not_run` statuses for hardware stages | Evaluation harnesses and paper-result artifacts approved for release |
 
-The example establishes host equivalence for one candidate. It does not call a model or FPGA vendor tool, perform selection or repair, generate RTL, reproduce paper results, or claim hardware validation. See [WORKFLOW.md](WORKFLOW.md) for the complete method contract and the exact release boundary.
+The runnable artifact stops at host equivalence. It does not call a model or FPGA vendor tool, perform live selection or repair, generate RTL, reproduce paper results, or claim hardware validation.
 
 No license file is included at this stage.
