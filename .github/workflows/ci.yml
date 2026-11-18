@@ -1,0 +1,35 @@
+name: FPGA-GEN example
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  host-example:
+    name: Host example (Python ${{ matrix.python }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.9", "3.12"]
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Compile and compare the standalone example
+        run: python examples/vector_add/run.py
+      - name: Check the host report
+        run: >-
+          python -c "import json, pathlib;
+          report=json.loads(pathlib.Path('build/vector_add/report.json').read_text());
+          assert report['status'] == 'pass';
+          assert report['host_test_count'] == 70;
+          assert all(report['source_sha256'].values());
+          assert set(report['hardware_stages'].values()) == {'not_run'}"
